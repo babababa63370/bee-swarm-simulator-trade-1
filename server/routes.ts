@@ -145,6 +145,15 @@ export async function registerRoutes(
       user.isCreator = true;
       user.isAdmin = true;
       user.isStaff = true;
+    } else if (user) {
+      // Ensure others don't accidentally get these if they somehow get the username ".meonix" 
+      // though username should be unique from Discord/Replit.
+      // But we can also check discordId if we want to be super safe.
+      if (user.discordId === "1243206708604702791") {
+        user.isCreator = true;
+        user.isAdmin = true;
+        user.isStaff = true;
+      }
     }
     res.json(user);
   });

@@ -298,7 +298,7 @@ export default function Codes() {
                       {code.description}
                     </p>
                     <div className="space-y-1">
-                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Rewards:</p>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Récompenses :</p>
                       <ul className="space-y-1">
                         {code.reward.map((item: string, index: number) => (
                           <li key={index} className="text-sm text-foreground/90 flex items-center gap-2">
