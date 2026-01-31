@@ -40,6 +40,14 @@ export async function registerRoutes(
   app.use(passport.initialize());
   app.use(passport.session());
 
+  // Global Error Handling Middleware
+  app.use((err: any, _req: any, res: any, _next: any) => {
+    console.error("[server] Global Error:", err);
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || "Internal Server Error";
+    res.status(status).json({ message, detail: process.env.NODE_ENV === "development" ? err : undefined });
+  });
+
   passport.serializeUser((user: any, done) => done(null, user.id));
   passport.deserializeUser(async (id: number, done) => {
     try {

@@ -18,6 +18,7 @@ import GroupTracking from "@/pages/GroupTracking";
 import AdminPanel from "@/pages/AdminPanel";
 import CreatorPanel from "@/pages/CreatorPanel";
 import { GlobalSnowfall } from "@/components/GlobalSnowfall";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 function Router() {
   const [location] = useLocation();
@@ -68,12 +69,14 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
