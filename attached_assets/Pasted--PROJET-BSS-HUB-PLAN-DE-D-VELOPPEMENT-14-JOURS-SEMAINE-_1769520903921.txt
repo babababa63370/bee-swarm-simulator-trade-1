@@ -1,0 +1,31 @@
+# 🐝 PROJET BSS HUB - PLAN DE DÉVELOPPEMENT (14 JOURS)
+
+## 📅 SEMAINE 1 : MOTEUR ET AUTOMATISATION
+- **Jour 1 : Auth & Base de données**
+  Prompt : "Crée un projet Next.js (Tailwind + Prisma). Installe l'auth Discord OAuth2. Stocke l'ID Discord, le pseudo et les rôles dans PostgreSQL."
+- **Jour 2 : Value List des Stickers**
+  Prompt : "Crée une page 'Value List' avec recherche/filtres. Table SQL : nom, image, prix, tendance. Ajoute un mode édition pour le staff."
+- **Jour 3 : Staff & Social**
+  Prompt : "Crée une page /staff avec bios éditables par les modos. Ajoute un système de commentaires sous les stickers et les profils staff."
+- **Jour 4 : Flux Automatiques**
+  Prompt : "Utilise Discord.js pour afficher les messages du salon #leaks. Intègre l'API YouTube pour lister les vidéos des créateurs BSS."
+- **Jour 5 : Tracker Groupe Onett**
+  Prompt : "Script pour surveiller l'API du groupe Roblox 1015130. Envoie un MP Discord si le statut change ou si les membres augmentent."
+- **Jour 6 : Outils de Farm**
+  Prompt : "Crée un calculateur de Boost (multiplicateurs) et des Timers de Boss (Snail/Crab) avec rappels par MP Discord."
+- **Jour 7 : Design & Mobile**
+  Prompt : "Applique un thème sombre/miel (#1a1a1b & #febc11). Optimise l'interface pour une utilisation 100% mobile."
+
+## 📅 SEMAINE 2 : TRADING PRO & SÉCURITÉ (V2)
+- **Jour 8-9 : Matchmaking**
+  Prompt : "Crée des listes 'J'AI / JE CHERCHE' sur les profils. Notifie l'utilisateur A si l'utilisateur B possède l'item qu'il cherche."
+- **Jour 10 : Simulateur de Trade**
+  Prompt : "Code un calculateur Win/Fair/Loss qui compare la valeur totale de deux offres de trade basées sur la DB."
+- **Jour 11 : Générateur de cartes de Trade**
+  Prompt : "Crée un outil (Canvas) pour générer une image partageable montrant l'avatar et les stickers à échanger de l'utilisateur."
+- **Jour 12 : Sécurité & Liste Noire**
+  Prompt : "Crée un formulaire de signalement de scam avec upload d'images. Ajoute une base de données consultable des IDs bannis."
+- **Jour 13 : Gamification**
+  Prompt : "Ajoute une 'Chasse au Sticker' quotidienne (spawn aléatoire sur le site) et des badges de réputation sur les profils."
+- **Jour 14 : Panel Admin Global**
+  Prompt : "Crée un dashboard maître pour modifier les prix, modérer les commentaires et gérer les rapports de scam."

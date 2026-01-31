@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* BSS Theme - Dark Mode Default */
+  --background: 240 3% 10%; /* #1a1a1b */
+  --foreground: 0 0% 95%;   /* White-ish */
+
+  --card: 240 3% 13%;
+  --card-foreground: 0 0% 95%;
+
+  --popover: 240 3% 13%;
+  --popover-foreground: 0 0% 95%;
+
+  --primary: 43 99% 53%;    /* #febc11 - Honey Yellow */
+  --primary-foreground: 240 3% 10%;
+
+  --secondary: 25 38% 31%;  /* #8B4513 - Honey Brown */
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 240 3% 18%;
+  --muted-foreground: 240 5% 65%;
+
+  --accent: 43 99% 53%;
+  --accent-foreground: 240 3% 10%;
+
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 3% 20%;
+  --input: 240 3% 20%;
+  --ring: 43 99% 53%;
+
+  --radius: 1rem;
+
+  --font-display: 'Fredoka', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+/* Force dark mode styles */
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+}
+
+/* Honeycomb pattern background */
+.bg-honeycomb {
+  background-image: radial-gradient(hsl(var(--primary) / 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+@keyframes snow {
+  0% { transform: translateY(-50px) rotate(0deg); }
+  100% { transform: translateY(600px) rotate(360deg); }
+}
+
+@keyframes snow-global {
+  0% { transform: translateY(-50px) rotate(0deg); }
+  100% { transform: translateY(110vh) rotate(360deg); }
+}
+
+.animate-snow {
+  animation: snow linear infinite;
+}
+
+.animate-snow-global {
+  animation: snow-global linear infinite;
+}
+
+.hexagon-avatar {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
