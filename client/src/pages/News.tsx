@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { MessageSquare, Loader2, Calendar } from "lucide-react";
+import { MessageSquare, Loader2, Calendar, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import ReactMarkdown from "react-markdown";
@@ -33,9 +34,20 @@ interface DiscordMessage {
 
 export default function News() {
   const channelId = "1465773678842351768";
-  const { data: messages, isLoading } = useQuery<DiscordMessage[]>({
+  const { data: messages, isLoading, error } = useQuery<DiscordMessage[]>({
     queryKey: ["/api/discord/messages", channelId],
   });
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
+        <AlertCircle className="h-12 w-12 text-destructive/50" />
+        <h2 className="text-xl font-bold text-white">Erreur de chargement</h2>
+        <p className="text-muted-foreground">Impossible de récupérer les actualités.</p>
+        <Button variant="outline" onClick={() => window.location.reload()}>Réessayer</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 px-4 py-8">

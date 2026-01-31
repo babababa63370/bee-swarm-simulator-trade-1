@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { YoutubeChannel, YoutubeVideo, User } from "@shared/schema";
-import { LayoutGrid, Users, Youtube, Plus, Trash2, ExternalLink, RefreshCw, Loader2, Play, ChevronRight, User as UserIcon } from "lucide-react";
+import { LayoutGrid, Users, Youtube, Plus, Trash2, ExternalLink, RefreshCw, Loader2, Play, ChevronRight, User as UserIcon, AlertCircle } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,13 +20,24 @@ export default function Contents() {
   
   const { data: user } = useQuery<User>({ queryKey: ["/api/auth/me"] });
   
-  const { data: channels, isLoading: loadingChannels } = useQuery<YoutubeChannel[]>({
+  const { data: channels, isLoading: loadingChannels, error: errorChannels } = useQuery<YoutubeChannel[]>({
     queryKey: ["/api/youtube/channels"]
   });
 
-  const { data: videos, isLoading: loadingVideos } = useQuery<YoutubeVideo[]>({
+  const { data: videos, isLoading: loadingVideos, error: errorVideos } = useQuery<YoutubeVideo[]>({
     queryKey: ["/api/youtube/videos"]
   });
+
+  if (errorChannels || errorVideos) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
+        <AlertCircle className="h-12 w-12 text-destructive/50" />
+        <h2 className="text-xl font-bold text-white">Erreur de chargement</h2>
+        <p className="text-muted-foreground">Impossible de récupérer le contenu YouTube.</p>
+        <Button variant="outline" onClick={() => window.location.reload()}>Réessayer</Button>
+      </div>
+    );
+  }
 
   const addChannelMutation = useMutation({
     mutationFn: async (channelId: string) => {

@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { BeesmasBanner } from "@/components/BeesmasBanner";
 import { SiDiscord } from "react-icons/si";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const { user } = useAuth();

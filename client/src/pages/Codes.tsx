@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Check, Ticket, Gift, Clock, Plus, Trash2, X, Edit2 } from "lucide-react";
+import { Copy, Check, Ticket, Gift, Clock, Plus, Trash2, X, Edit2, AlertCircle } from "lucide-react";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,9 +25,20 @@ export default function Codes() {
     status: "active" as "active" | "expired"
   });
 
-  const { data: codes = [], isLoading } = useQuery<any[]>({
+  const { data: codes = [], isLoading, error } = useQuery<any[]>({
     queryKey: ["/api/codes"]
   });
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
+        <AlertCircle className="h-12 w-12 text-destructive/50" />
+        <h2 className="text-xl font-bold text-white">Erreur de chargement</h2>
+        <p className="text-muted-foreground">Impossible de récupérer les codes promotionnels.</p>
+        <Button variant="outline" onClick={() => window.location.reload()}>Réessayer</Button>
+      </div>
+    );
+  }
 
   const createMutation = useMutation({
     mutationFn: async (data: any) => {
