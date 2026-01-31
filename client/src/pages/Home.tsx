@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Sparkles, TrendingUp, Users, ArrowRight, Server } from "lucide-react";
+import { Sparkles, TrendingUp, Users, ArrowRight, Server, AlertCircle } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
@@ -8,9 +8,33 @@ import { SiDiscord } from "react-icons/si";
 
 export default function Home() {
   const { user } = useAuth();
-  const { data: stats } = useQuery<{ stickerCount: number, playerCount: string, serverMembers: string }>({
+  const { data: stats, isLoading, error } = useQuery<{ stickerCount: number, playerCount: string, serverMembers: string }>({
     queryKey: ["/api/stats"]
   });
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="h-64 rounded-3xl bg-primary/5 animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-24 rounded-2xl bg-white/5 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center space-y-4">
+        <AlertCircle className="h-12 w-12 text-destructive/50" />
+        <h2 className="text-xl font-bold text-white">Oops! Une erreur est survenue</h2>
+        <p className="text-muted-foreground">Impossible de charger les statistiques pour le moment.</p>
+        <Button variant="outline" onClick={() => window.location.reload()}>Réessayer</Button>
+      </div>
+    );
+  }
 
   const container = {
     hidden: { opacity: 0 },

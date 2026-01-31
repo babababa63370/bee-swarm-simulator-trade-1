@@ -54,13 +54,18 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    if (user && user.username === ".meonix") {
-      user.isCreator = true;
-      user.isAdmin = true;
-      user.isStaff = true;
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      if (user && user.username === ".meonix") {
+        user.isCreator = true;
+        user.isAdmin = true;
+        user.isStaff = true;
+      }
+      return user;
+    } catch (error) {
+      console.error(`[storage] Error in getUser(${id}):`, error);
+      return undefined;
     }
-    return user;
   }
 
   async getUserByReplitId(replitId: string): Promise<User | undefined> {
