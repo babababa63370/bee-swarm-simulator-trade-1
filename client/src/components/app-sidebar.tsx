@@ -41,7 +41,7 @@ export function AppSidebar() {
   const hasSpecialAccess = user?.isAdmin || user?.isCreator || user?.isStaff;
 
   return (
-    <Sidebar>
+    <Sidebar className="md:hidden">
       <SidebarHeader className="border-b p-4">
         <div className="flex items-center gap-2 font-bold text-xl text-primary">
           <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center text-primary-foreground">
