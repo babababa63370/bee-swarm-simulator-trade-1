@@ -32,7 +32,7 @@ function Router() {
   }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="flex min-h-screen w-full bg-background text-foreground font-body selection:bg-primary/30 relative">
         <AppSidebar />
         <div className="flex flex-col flex-1 min-w-0">
