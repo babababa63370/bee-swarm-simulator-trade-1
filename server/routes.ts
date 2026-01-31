@@ -564,34 +564,78 @@ export async function registerRoutes(
       // Initial sync
       if (YOUTUBE_API_KEY) {
         try {
-          const videoResponse = await axios.get("https://www.googleapis.com/youtube/v3/search", {
+          console.log(`[youtube] Starting initial sync for channel: ${data.channelId}`);
+          
+          // 1. First, get the "Uploads" playlist ID for the channel
+          const channelResponse = await axios.get("https://www.googleapis.com/youtube/v3/channels", {
             params: {
-              part: "snippet",
-              channelId: data.channelId.startsWith("@") ? undefined : data.channelId,
+              part: "contentDetails",
+              id: data.channelId.startsWith("@") ? undefined : data.channelId,
               forHandle: data.channelId.startsWith("@") ? data.channelId : undefined,
-              maxResults: 10,
-              order: "date",
-              type: "video",
               key: YOUTUBE_API_KEY
             }
           });
 
-          if (videoResponse.data.items) {
-            const videos = videoResponse.data.items.map((item: any) => ({
-              channelId: data.channelId,
-              videoId: item.id.videoId,
-              title: item.snippet.title,
-              thumbnail: item.snippet.thumbnails.high.url,
-              publishedAt: item.snippet.publishedAt,
-              viewCount: "0"
-            }));
+          const uploadsPlaylistId = channelResponse.data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
 
-            for (const video of videos) {
-              await storage.createYoutubeVideo(video);
+          if (uploadsPlaylistId) {
+            // 2. Fetch the latest 10 videos from the Uploads playlist
+            const playlistResponse = await axios.get("https://www.googleapis.com/youtube/v3/playlistItems", {
+              params: {
+                part: "snippet",
+                playlistId: uploadsPlaylistId,
+                maxResults: 10,
+                key: YOUTUBE_API_KEY
+              }
+            });
+
+            if (playlistResponse.data.items) {
+              const videos = playlistResponse.data.items.map((item: any) => ({
+                channelId: data.channelId,
+                videoId: item.snippet.resourceId.videoId,
+                title: item.snippet.title,
+                thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+                publishedAt: item.snippet.publishedAt,
+                viewCount: "0"
+              }));
+
+              console.log(`[youtube] Found ${videos.length} videos for ${data.channelId}`);
+              for (const video of videos) {
+                await storage.createYoutubeVideo(video);
+              }
+            }
+          } else {
+            console.warn(`[youtube] No uploads playlist found for ${data.channelId}. Falling back to search.`);
+            // Fallback to search if playlist ID is not found
+            const videoResponse = await axios.get("https://www.googleapis.com/youtube/v3/search", {
+              params: {
+                part: "snippet",
+                channelId: data.channelId.startsWith("@") ? undefined : data.channelId,
+                forHandle: data.channelId.startsWith("@") ? data.channelId : undefined,
+                maxResults: 10,
+                order: "date",
+                type: "video",
+                key: YOUTUBE_API_KEY
+              }
+            });
+
+            if (videoResponse.data.items) {
+              const videos = videoResponse.data.items.map((item: any) => ({
+                channelId: data.channelId,
+                videoId: item.id.videoId,
+                title: item.snippet.title,
+                thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+                publishedAt: item.snippet.publishedAt,
+                viewCount: "0"
+              }));
+
+              for (const video of videos) {
+                await storage.createYoutubeVideo(video);
+              }
             }
           }
-        } catch (error) {
-          console.error("YouTube Sync Error:", error);
+        } catch (error: any) {
+          console.error("YouTube Sync Error:", error.response?.data || error.message);
         }
       }
 
@@ -634,34 +678,76 @@ export async function registerRoutes(
       const channels = await storage.getYoutubeChannels();
       for (const channel of channels) {
         try {
-          const response = await axios.get("https://www.googleapis.com/youtube/v3/search", {
+          console.log(`[youtube] Syncing channel: ${channel.channelId}`);
+          
+          // 1. Get uploads playlist ID
+          const channelResponse = await axios.get("https://www.googleapis.com/youtube/v3/channels", {
             params: {
-              part: "snippet",
-              channelId: channel.channelId.startsWith("@") ? undefined : channel.channelId,
+              part: "contentDetails",
+              id: channel.channelId.startsWith("@") ? undefined : channel.channelId,
               forHandle: channel.channelId.startsWith("@") ? channel.channelId : undefined,
-              maxResults: 10,
-              order: "date",
-              type: "video",
               key: YOUTUBE_API_KEY
             }
           });
 
-          if (response.data.items) {
-            const videos = response.data.items.map((item: any) => ({
-              channelId: channel.channelId,
-              videoId: item.id.videoId,
-              title: item.snippet.title,
-              thumbnail: item.snippet.thumbnails.high.url,
-              publishedAt: item.snippet.publishedAt,
-              viewCount: "0"
-            }));
+          const uploadsPlaylistId = channelResponse.data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
 
-            for (const video of videos) {
-              await storage.createYoutubeVideo(video);
+          if (uploadsPlaylistId) {
+            // 2. Fetch latest videos from playlist
+            const playlistResponse = await axios.get("https://www.googleapis.com/youtube/v3/playlistItems", {
+              params: {
+                part: "snippet",
+                playlistId: uploadsPlaylistId,
+                maxResults: 10,
+                key: YOUTUBE_API_KEY
+              }
+            });
+
+            if (playlistResponse.data.items) {
+              const videos = playlistResponse.data.items.map((item: any) => ({
+                channelId: channel.channelId,
+                videoId: item.snippet.resourceId.videoId,
+                title: item.snippet.title,
+                thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+                publishedAt: item.snippet.publishedAt,
+                viewCount: "0"
+              }));
+
+              for (const video of videos) {
+                await storage.createYoutubeVideo(video);
+              }
+            }
+          } else {
+            // Fallback to search
+            const response = await axios.get("https://www.googleapis.com/youtube/v3/search", {
+              params: {
+                part: "snippet",
+                channelId: channel.channelId.startsWith("@") ? undefined : channel.channelId,
+                forHandle: channel.channelId.startsWith("@") ? channel.channelId : undefined,
+                maxResults: 10,
+                order: "date",
+                type: "video",
+                key: YOUTUBE_API_KEY
+              }
+            });
+
+            if (response.data.items) {
+              const videos = response.data.items.map((item: any) => ({
+                channelId: channel.channelId,
+                videoId: item.id.videoId,
+                title: item.snippet.title,
+                thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+                publishedAt: item.snippet.publishedAt,
+                viewCount: "0"
+              }));
+
+              for (const video of videos) {
+                await storage.createYoutubeVideo(video);
+              }
             }
           }
-        } catch (error) {
-          console.error(`Sync error for ${channel.channelId}:`, error);
+        } catch (error: any) {
+          console.error(`Sync error for ${channel.channelId}:`, error.response?.data || error.message);
         }
       }
       res.sendStatus(200);
